@@ -52,7 +52,6 @@ A3 = p1a2_LTE
 A4 = p1a2_GE
 # print("A4", A4)
 #------------------------------------------------------------------------------- 
-#------------------------------------------------------------------------------- 
 
 # 1b
 # Heun's method
@@ -148,6 +147,31 @@ A11 = p1c2_LTE
 A12 = p1c2_GE
 # print("A12", A12)
 #------------------------------------------------------------------------------- 
+
+# 1 report
+dt_list = np.arange(-5, -11 - 0.5 * 1, -1)
+p1a_GE_list = np.zeros_like(dt_list)
+p1b_GE_list = np.zeros_like(dt_list)
+p1c_GE_list = np.zeros_like(dt_list)
+for i in (range(len(dt_list))):
+    p1_dt = 2. ** dt_list[i]
+    p1_time = np.arange(0, 8 + 0.5 * p1_dt, p1_dt)
+    p1_x0 = 1.
+    p1_ex = np.exp(4. * (np.cos(p1_time)- 1.))
+
+    p1a_x = p1_forward_euler(p1_f, p1_x0, p1_dt, p1_time)
+    p1a_GE_list[i] = np.abs(p1a_x[-1] - p1_ex[-1])
+
+    p1b_x = p1_Heun(p1_f, p1_x0, p1_dt, p1_time)
+    p1b_GE_list[i] = np.abs(p1b_x[-1] - p1_ex[-1])
+
+    p1c_x = p1_forward_euler(p1_f, p1_x0, p1_dt, p1_time)
+    p1c_GE_list[i] = np.abs(p1c_x[-1] - p1_ex[-1])
+
+plt.loglog(2. ** dt_list, p1a_GE_list)
+plt.show()
+
+#-------------------------------------------------------------------------------
 #------------------------------------------------------------------------------- 
 
 # Problem 2
