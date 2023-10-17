@@ -1,6 +1,13 @@
 import numpy as np
-import matplotlib.pyplot as plt
 import scipy as sp
+import matplotlib.pyplot as plt
+import matplotlib as mpl
+from matplotlib.backends.backend_pdf import PdfPages
+# from matplotlib.ticker import (AutoMinorLocator,MultipleLocator)
+mpl.use('Agg')
+mpl.rc('text', usetex=True)
+mpl.rc('font', family='serif')
+plt.style.use('./presentation.mplstyle')
 
 # Problem 1
 def p1_f(t_t, t_x):
@@ -148,28 +155,94 @@ A12 = p1c2_GE
 # print("A12", A12)
 #------------------------------------------------------------------------------- 
 
-# 1 report
-dt_list = np.arange(-5, -11 - 0.5 * 1, -1)
-p1a_GE_list = np.zeros_like(dt_list)
-p1b_GE_list = np.zeros_like(dt_list)
-p1c_GE_list = np.zeros_like(dt_list)
-for i in (range(len(dt_list))):
-    p1_dt = 2. ** dt_list[i]
-    p1_time = np.arange(0, 8 + 0.5 * p1_dt, p1_dt)
-    p1_x0 = 1.
-    p1_ex = np.exp(4. * (np.cos(p1_time)- 1.))
+# # 1 report
+# dt_list = 2. ** np.arange(-11, -5 + 0.5 * 1, +1)
+# p1a_GE_list = np.zeros_like(dt_list)
+# p1b_GE_list = np.zeros_like(dt_list)
+# p1c_GE_list = np.zeros_like(dt_list)
+# for i in (range(len(dt_list))):
+#     p1_dt = dt_list[i]
+#     p1_time = np.arange(0, 8 + 0.5 * p1_dt, p1_dt)
+#     p1_x0 = 1.
+#     p1_ex = np.exp(4. * (np.cos(p1_time)- 1.))
 
-    p1a_x = p1_forward_euler(p1_f, p1_x0, p1_dt, p1_time)
-    p1a_GE_list[i] = np.abs(p1a_x[-1] - p1_ex[-1])
+#     p1a_x = p1_forward_euler(p1_f, p1_x0, p1_dt, p1_time)
+#     p1a_GE_list[i] = np.abs(p1a_x[-1] - p1_ex[-1])
 
-    p1b_x = p1_Heun(p1_f, p1_x0, p1_dt, p1_time)
-    p1b_GE_list[i] = np.abs(p1b_x[-1] - p1_ex[-1])
+#     p1b_x = p1_Heun(p1_f, p1_x0, p1_dt, p1_time)
+#     p1b_GE_list[i] = np.abs(p1b_x[-1] - p1_ex[-1])
 
-    p1c_x = p1_forward_euler(p1_f, p1_x0, p1_dt, p1_time)
-    p1c_GE_list[i] = np.abs(p1c_x[-1] - p1_ex[-1])
+#     p1c_x = p1_RK2(p1_f, p1_x0, p1_dt, p1_time)
+#     p1c_GE_list[i] = np.abs(p1c_x[-1] - p1_ex[-1])
 
-plt.loglog(2. ** dt_list, p1a_GE_list)
-plt.show()
+# p1a_m, p1a_c = np.polyfit(np.log(dt_list), np.log(p1a_GE_list), 1)
+# print(p1a_m)
+# p1a_fit_line = np.exp(p1a_c) * (dt_list ** p1a_m)
+
+# plt.show()
+# pa = PdfPages( 'amath581_hw01_p1_a.pdf')
+# fig, ax = plt.subplots()
+# ax.loglog(dt_list, p1a_GE_list, 'r-x',label='Forward Euler')
+# ax.plot(dt_list, p1a_fit_line, 'b--',label='best-fit line')
+# x_ticks = dt_list
+# x_ticks_labels = [r'$2^{-11}$', r'$2^{-10}$', r'$2^{-09}$', r'$2^{-08}$', r'$2^{-07}$', r'$2^{-06}$', r'$2^{-05}$']
+# ax.set_xticks(x_ticks, x_ticks_labels)
+# ax.set_xlabel(r'ln($\Delta t$)')
+# ax.set_ylabel(r'ln($E_N$)')
+# ax.set_ylim(1e-4, 1e-2)
+# # ax.set_xlim(0.0, 16.0)
+# plt.tight_layout()
+# ax.legend(loc='best')
+# pa.savefig()
+# pa.close()
+
+# plt.close(fig)
+
+# p1b_m, p1b_c = np.polyfit(np.log(dt_list), np.log(p1b_GE_list), 1)
+# print(p1b_m)
+# p1b_fit_line = np.exp(p1b_c) * (dt_list ** p1b_m)
+
+# plt.show()
+# pb = PdfPages( 'amath581_hw01_p1_b.pdf')
+# fig, ax = plt.subplots()
+# ax.loglog(dt_list, p1b_GE_list, 'r-x',label="Heun's method")
+# ax.plot(dt_list, p1b_fit_line, 'b--',label='best-fit line')
+# x_ticks = dt_list
+# x_ticks_labels = [r'$2^{-11}$', r'$2^{-10}$', r'$2^{-09}$', r'$2^{-08}$', r'$2^{-07}$', r'$2^{-06}$', r'$2^{-05}$']
+# ax.set_xticks(x_ticks, x_ticks_labels)
+# ax.set_xlabel(r'ln($\Delta t$)')
+# ax.set_ylabel(r'ln($E_N$)')
+# ax.set_ylim(1e-8, 1e-3)
+# # ax.set_xlim(0.0, 16.0)
+# plt.tight_layout()
+# ax.legend(loc='best')
+# pb.savefig()
+# pb.close()
+
+# plt.close(fig)
+
+# p1c_m, p1c_c = np.polyfit(np.log(dt_list), np.log(p1c_GE_list), 1)
+# p1c_fit_line = np.exp(p1c_c) * (dt_list ** p1c_m)
+# print(p1c_m)
+
+# plt.show()
+# pc = PdfPages( 'amath581_hw01_p1_c.pdf')
+# fig, ax = plt.subplots()
+# ax.loglog(dt_list, p1c_GE_list, 'r-x',label="Runge-Kutta-2")
+# ax.plot(dt_list, p1c_fit_line, 'b--',label='best-fit line')
+# x_ticks = dt_list
+# x_ticks_labels = [r'$2^{-11}$', r'$2^{-10}$', r'$2^{-09}$', r'$2^{-08}$', r'$2^{-07}$', r'$2^{-06}$', r'$2^{-05}$']
+# ax.set_xticks(x_ticks, x_ticks_labels)
+# ax.set_xlabel(r'ln($\Delta t$)')
+# ax.set_ylabel(r'ln($E_N$)')
+# ax.set_ylim(1e-8, 1e-3)
+# # ax.set_xlim(0.0, 16.0)
+# plt.tight_layout()
+# ax.legend(loc='best')
+# pc.savefig()
+# pc.close()
+
+# plt.close(fig)
 
 #-------------------------------------------------------------------------------
 #------------------------------------------------------------------------------- 
@@ -259,7 +332,7 @@ p3a_X = p3a_sol.y
 p3a_dt_sum = 0.0
 for k in range(1, len(p3a_T)):
     p3a_dt_sum = p3a_dt_sum + (p3a_T[k] - p3a_T[k-1])
-p3a_dt_avg = p3a_dt_sum / (len(p3a_T) + 1.)
+p3a_dt_avg = p3a_dt_sum / (len(p3a_T) - 1.)
  
 A17 = p3a_X[0, -1]
 # print("A17", A17)
@@ -274,7 +347,7 @@ p3b_X = p3b_sol.y
 p3b_dt_sum = 0.0
 for k in range(1, len(p3b_T)):
     p3b_dt_sum += (p3b_T[k] - p3b_T[k-1])
-p3b_dt_avg = p3b_dt_sum / (len(p3b_T) + 1.)
+p3b_dt_avg = p3b_dt_sum / (len(p3b_T) - 1.)
 
 A19 = p3b_X[0, -1]
 # print("A19", A19)
