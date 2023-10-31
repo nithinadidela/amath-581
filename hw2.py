@@ -67,16 +67,16 @@ def p1():
 
     # plt.show()
 
-    A1 = eigenvals[0]
-    A2 = eigenfunc[0]
+    t_A1 = eigenvals[0]
+    t_A2 = eigenfunc[0]
 
-    A3 = eigenvals[1]
-    A4 = eigenfunc[1]
+    t_A3 = eigenvals[1]
+    t_A4 = eigenfunc[1]
 
-    A5 = eigenvals[2]
-    A6 = eigenfunc[2]
-
-    return A1, A2, A3, A4, A5, A6
+    t_A5 = eigenvals[2]
+    t_A6 = eigenfunc[2]
+    return t_A1, t_A2, t_A3, t_A4, t_A5, t_A6
+#------------------------------------------------------------------------------- 
 
 def p2_trap():
     # x''(t) = x = f(x, t)
@@ -119,17 +119,20 @@ def p2_trap():
         # print(p[-1])
         sollist[i] = p[-1]
 
-        err = np.max(np.abs(p - true_solution(t)))
+        # err = np.max(np.abs(p - true_solution(t)))
         # print(err)
-        errlist[i] = err
 
-    A7 = sollist[0]
-    A8 = errlist[0]
+        global_err = np.abs(p[-1] - true_solution(t)[-1])
+        errlist[i] = global_err
 
-    A9 = sollist[1]
-    A10 = errlist[1]
+    t_A7 = sollist[0]
+    t_A8 = errlist[0]
 
-    return A7, A8, A9, A10
+    t_A9 = sollist[1]
+    t_A10 = errlist[1]
+
+    return t_A7, t_A8, t_A9, t_A10
+#------------------------------------------------------------------------------- 
 
 def p2_midp():
     # x''(t) + x = 0
@@ -138,7 +141,7 @@ def p2_midp():
     # t0 = 0, tN = 1, dt = 0.1
 
     def f(x, t):
-        return -x
+        return -1. * x
 
     def true_solution(t):
         return np.cos(t) 
@@ -159,7 +162,7 @@ def p2_midp():
         v[0] = v0
 
         p[1] = p0 + dt * v0
-        a0 = f(p0, t)
+        a0 = f(p0, t0)
         v[1] = v0 + dt * a0 
         for k in range(1, len(t) - 1):
             p[k + 1] = p[k - 1] + 2. * dt * v[k]
@@ -175,17 +178,20 @@ def p2_midp():
         # print(p[-1])
         sollist[i] = p[-1]
 
-        err = np.max(np.abs(p - true_solution(t)))
+        # err = np.max(np.abs(p - true_solution(t)))
         # print(err)
-        errlist[i] = err
 
-    A11 = sollist[0]
-    A12 = errlist[0]
+        global_err = np.abs(p[-1] - true_solution(t)[-1])
+        errlist[i] = global_err
 
-    A13 = sollist[1]
-    A14 = errlist[1]
+    t_A11 = sollist[0]
+    t_A12 = errlist[0]
+
+    t_A13 = sollist[1]
+    t_A14 = errlist[1]
     
-    return A11, A12, A13, A14
+    return t_A11, t_A12, t_A13, t_A14
+#------------------------------------------------------------------------------- 
 
 def p3():
     # y'' + p(x)*y' + q(x)*y = r(x)
@@ -250,46 +256,46 @@ def p3():
         # print("Error = {}".format(err))
         # print(y[N//2])
 
+        # global_err = np.abs(y[-1] - true_sol(x, a)[-1])
+        errlist[a] = err
         sollist[a] = y[N//2]
-        errlist[a] = err 
 
-    A15 = sollist[0]
-    A16 = errlist[0]
+    t_A15 = sollist[0]
+    t_A16 = errlist[0]
 
-    A17 = sollist[1]
-    A18 = errlist[1]
+    t_A17 = sollist[1]
+    t_A18 = errlist[1]
 
-    A19 = sollist[2]
-    A20 = errlist[2]
+    t_A19 = sollist[2]
+    t_A20 = errlist[2]
 
-    return A15, A16, A17, A18, A19, A20
+    return t_A15, t_A16, t_A17, t_A18, t_A19, t_A20
+#------------------------------------------------------------------------------- 
 
-def main():
-    return p1(), p2_trap(), p2_midp(), p3()
+A1, A2, A3, A4, A5, A6 = p1()
+# print("A1", A1)
+# print("A2", A2)
+# print("A3", A3)
+# print("A4", A4)
+# print("A5", A5)
+# print("A6", A6)
 
-if __name__ == "__main__":
-  p1_res, p2_trap_res, p2_midp_res, p3_res = main()
-  A1, A2, A3, A4, A5, A6 = p1_res
-  A7, A8, A9, A10 = p2_trap_res
-  A11, A12, A13, A14 = p2_midp_res
-  A15, A16, A17, A18, A19, A20 = p3_res
-#   print("A1", A1)
-#   print("A2", A2)
-#   print("A3", A3)
-#   print("A4", A4)
-#   print("A5", A5)
-#   print("A6", A6)
-#   print("A7", A7)
-#   print("A8", A8)
-#   print("A9", A9)
-#   print("A10", A10)
-#   print("A11", A11)
-#   print("A12", A12)
-#   print("A13", A13)
-#   print("A14", A14)
-#   print("A15", A15)
-#   print("A16", A16)
-#   print("A17", A17)
-#   print("A18", A18)
-#   print("A19", A19)
-#   print("A20", A20)
+A7, A8, A9, A10 = p2_trap()
+# print("A7", A7)
+# print("A8", A8)
+# print("A9", A9)
+# print("A10", A10)
+
+A11, A12, A13, A14,= p2_midp()
+# print("A11", A11)
+# print("A12", A12)
+# print("A13", A13)
+# print("A14", A14)
+
+A15, A16, A17, A18, A19, A20 = p3()
+# print("A15", A15)
+# print("A16", A16)
+# print("A17", A17)
+# print("A18", A18)
+# print("A19", A19)
+# print("A20", A20)
