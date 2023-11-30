@@ -315,7 +315,6 @@ def p3(dx, dy):
                 b[k] = b[k] - down(x[m])/ dy ** 2
 
     A = A.tocsc()
-    
 
     # Solve system
     u = scipy.sparse.linalg.spsolve(A, b)
@@ -335,6 +334,379 @@ def p3(dx, dy):
     l_A2 = U[3*Ny//4, Nx//4]
     return l_A1, l_A2
 #------------------------------------------------------------------------------- 
+
+def p4a(dx):
+    # u_xx + u_yy = - sin(pi * x) sin(pi * y)
+    # u(x, 0) = 0
+    # u(x, 2) = 0
+    # u(0, y) = 0
+    # u(2, y) = 0
+
+    x0 = 0
+    xN = 2
+    y0 = 0
+    yN = 2
+
+    x = np.arange(x0, xN + 0.5 * dx, dx)
+    y = np.arange(y0, yN + 0.5 * dx, dx)
+    N = len(x)
+    
+    # Boundary conditions
+    # u(x, 0)
+    def down(x):
+        return 0 
+
+    # u(x, 3)
+    def up(x):
+        return 0 
+
+    # u(0, y)
+    def left(y):
+        return 0 
+
+    # u(3, y)
+    def right(y):
+        return 0 
+
+    # Solve Au = b
+    N_total = (N - 2) * (N - 2)
+    # print("N_total = {}".format(N_total))
+    # print("Entries in matrix = {}".format(N_total ** 2))
+    A = scipy.sparse.dok_array((N_total, N_total))
+    b = np.zeros((N_total, 1))
+
+    def point2ind(m, n):
+        return (n - 1) * (N - 2) + m - 1
+
+    for n in range(1, N-1):
+        for m in range(1, N-1):
+            k = point2ind(m, n)
+            A[k, k] = -4 / dx ** 2
+            b[k] = -1. * np.sin(np.pi * x[m]) * np.sin(np.pi * y[n])
+
+            if m > 1:
+                A[k, k - 1] = 1 / dx ** 2
+            else:
+                b[k] = b[k] - left((y[n])) / dx ** 2 
+
+            if n < N - 2:
+                A[k, k + N - 2] = 1 / dx ** 2
+            else:
+                b[k] = b[k] - up(x[m]) / dx ** 2
+
+            if m < N - 2:
+                A[k, k + 1] = 1 / dx ** 2
+            else:
+                b[k] = b[k] - right(y[n]) / dx ** 2
+
+            if n > 1:
+                A[k, k - (N - 2)] = 1 / dx ** 2
+            else:
+                b[k] = b[k] - down(x[m])/ dx ** 2
+
+    A = A.tocsc()
+    
+    # Solve system
+    u = scipy.sparse.linalg.spsolve(A, b)
+
+    U_int = u.reshape((N-2, N-2))
+    U = np.zeros((N, N))
+    U[1:(N-1), 1:(N-1)] = U_int
+    U[0, :] = down(x)
+    U[N-1, :] = up(x)
+    U[:, 0] = left(y)
+    U[:, N-1] = right(y)
+
+    U_true_sol = np.zeros((N, N))
+    for n in range(1, N-1):
+        for m in range(1, N-1):
+            U_true_sol[m, n] = np.sin(np.pi * x[m]) * np.sin(np.pi * y[n]) \
+                / (2. * np.pi**2) 
+    
+    error = np.max(np.abs(U_true_sol - U))
+
+    if (dx == 2**(-5)): 
+      X, Y = np.meshgrid(x, y)
+      plt.contourf(X, Y, U_true_sol)
+      cbar = plt.colorbar()
+      plt.axis('equal')
+      plt.savefig('amath581_hw3_p4a_U.pdf')
+      plt.clf()
+    return error
+#------------------------------------------------------------------------------- 
+
+def p4b_sparse(dx):
+    # u_xx + u_yy = - sin(pi * x) sin(pi * y)
+    # u(x, 0) = 0
+    # u(x, 2) = 0
+    # u(0, y) = 0
+    # u(2, y) = 0
+
+    x0 = 0
+    xN = 2
+    y0 = 0
+    yN = 2
+
+    x = np.arange(x0, xN + 0.5 * dx, dx)
+    y = np.arange(y0, yN + 0.5 * dx, dx)
+    N = len(x)
+    
+    # Boundary conditions
+    # u(x, 0)
+    def down(x):
+        return 0 
+
+    # u(x, 3)
+    def up(x):
+        return 0 
+
+    # u(0, y)
+    def left(y):
+        return 0 
+
+    # u(3, y)
+    def right(y):
+        return 0 
+
+    # Solve Au = b
+    N_total = (N - 2) * (N - 2)
+    # print("N_total = {}".format(N_total))
+    # print("Entries in matrix = {}".format(N_total ** 2))
+    A = scipy.sparse.dok_array((N_total, N_total))
+    b = np.zeros((N_total, 1))
+
+    def point2ind(m, n):
+        return (n - 1) * (N - 2) + m - 1
+
+    neighbours = np.zeros((N_total, N_total))
+    for n in range(1, N-1):
+        for m in range(1, N-1):
+            k = point2ind(m, n)
+            A[k, k] = -20. / (6. * (dx ** 2))
+            b[k] = -1. * np.sin(np.pi * x[m]) * np.sin(np.pi * y[n])
+
+            if m > 1:
+                A[k, k - 1] = 4. / (6. * (dx ** 2))
+            else:
+                b[k] = b[k] - left((y[n])) / dx ** 2 
+
+            if n < N - 2:
+                A[k, k + N - 2] = 4. / (6. * (dx ** 2)) 
+            else:
+                b[k] = b[k] - up(x[m]) / dx ** 2
+
+            if m < N - 2:
+                A[k, k + 1] = 4. / (6. * (dx ** 2)) 
+            else:
+                b[k] = b[k] - right(y[n]) / dx ** 2
+
+            if n > 1:
+                A[k, k - (N - 2)] = 4. / (6. * (dx ** 2)) 
+            else:
+                b[k] = b[k] - down(x[m])/ dx ** 2
+
+            if (m > 1) and (n > 1):
+                A[k, (k-1) - (N-2)] = 1. / (6. * (dx ** 2))  
+
+            if (m > 1) and (n < (N - 2)):
+                A [k, (k-1) + (N-2)] = 1. / (6. * (dx ** 2)) 
+
+            if (m < (N-2)) and (n < (N - 2)):
+                A [k, (k+1) + (N-2)] = 1. / (6. * (dx ** 2)) 
+
+            if (m < (N-2)) and (n > 1):
+                A [k, (k+1) - (N-2)] = 1. / (6. * (dx ** 2)) 
+
+    A = A.tocsc()
+    
+    # Solve system
+    u = scipy.sparse.linalg.spsolve(A, b)
+
+    U_int = u.reshape((N-2, N-2))
+    U = np.zeros((N, N))
+    U[1:(N-1), 1:(N-1)] = U_int
+    U[0, :] = down(x)
+    U[N-1, :] = up(x)
+    U[:, 0] = left(y)
+    U[:, N-1] = right(y)
+
+    U_true_sol = np.zeros((N, N))
+    for n in range(1, N-1):
+        for m in range(1, N-1):
+            U_true_sol[m, n] = np.sin(np.pi * x[m]) * np.sin(np.pi * y[n]) \
+                / (2. * np.pi**2) 
+    
+    error = np.max(np.abs(U_true_sol - U))
+
+    if (dx == 2**(-5)): 
+      X, Y = np.meshgrid(x, y)
+      plt.contourf(X, Y, U_true_sol)
+      cbar = plt.colorbar()
+      plt.axis('equal')
+      plt.savefig('amath581_hw3_p4b_U.pdf')
+      plt.clf()
+    return error
+#------------------------------------------------------------------------------- 
+
+def p4b(dx):
+    # u_xx + u_yy = 0
+    # u(x, 0) = x^2 - 3x
+    # u(x, 3) = sin(2 pi x / 3) 
+    # u(0, y) = sin(pi y / 3)
+    # u(3, y) = 3y - y^2 
+
+    x0 = 0
+    xN = 2
+    y0 = 0
+    yN = 2
+
+    x = np.arange(x0, xN + 0.5 * dx, dx)
+    y = np.arange(y0, yN + 0.5 * dx, dx)
+    N = len(x)
+    
+    # Solve Au = b
+    N_total = N * N
+    # print("N_total = {}".format(N_total))
+    # print("Entries in matrix = {}".format(N_total ** 2))
+    A = np.zeros((N_total, N_total))
+    b = np.zeros((N_total, 1))
+
+    def point2ind(m, n):
+        return n * N + m
+
+    for n in range(N):
+        for m in range(N):
+            k = point2ind(m, n)
+            if n == 0:
+                A[k, k] = 1
+            elif n == N-1:
+                A[k, k] = 1
+            elif m == 0:
+                A[k, k] = 1
+            elif m == N-1:
+                A[k, k] = 1
+            else:
+                A[k, k] = -20. / (6. * dx ** 2)
+                A[k, k + 1] = 4. / (6. * dx ** 2)
+                A[k, k - 1] = 4. / (6. * dx ** 2)
+                A[k, k + N] = 4. / (6. * dx ** 2)
+                A[k, k - N] = 4. / (6. * dx ** 2)
+                A[k, k + 1 - N] = 1. / (6. * (dx ** 2))    
+                A[k, k + 1 + N] = 1. / (6. * (dx ** 2)) 
+                A[k, k - 1 - N] = 1. / (6. * (dx ** 2)) 
+                A[k, k - 1 + N] = 1. / (6. * (dx ** 2)) 
+                b[k] = -1. * np.sin(np.pi * x[m]) * np.sin(np.pi * y[n])
+
+    u = np.linalg.solve(A, b)
+    U = u.reshape((N, N))
+    U_true_sol = np.zeros((N, N))
+    for n in range(1, N-1):
+        for m in range(1, N-1):
+            U_true_sol[m, n] = np.sin(np.pi * x[m]) * np.sin(np.pi * y[n]) \
+                / (2. * np.pi**2) 
+    
+    error = np.max(np.abs(U_true_sol - U))
+    return error
+#------------------------------------------------------------------------------- 
+
+def p4c(dx):
+    x0 = 0
+    xN = 2
+    y0 = 0
+    yN = 2
+
+    x = np.arange(x0, xN + 0.5 * dx, dx)
+    y = np.arange(y0, yN + 0.5 * dx, dx)
+    N = len(x)
+
+    f = np.zeros((N, N))
+    for n in range(1, N-1):
+        for m in range(1, N-1):
+            f[m, n] = np.sin(np.pi * x[m]) * np.sin(np.pi * y[n]) \
+                / (2. * np.pi**2)  
+
+    
+    delf = np.zeros((N, N))
+    for n in range(1, N-1):
+        for m in range(1, N-1):
+            delf[m, n] = -1. * (np.sin(np.pi * x[m]) * np.sin(np.pi * y[n])) 
+
+    
+    lap9 = np.zeros((N, N))
+    for n in range(1, N-1):
+        for m in range(1, N-1):
+           lap9[m, n] = (4. * (f[m-1, n] + f[m+1, n] + f[m, n-1] + f[m, n+1]) \
+                         + 1. * (f[m-1, n-1] + f[m-1, n+1] + f[m+1, n-1] + f[m+1, n+1]) \
+                         - 20. * (f[m, n])) / (6. * dx**2) 
+    
+    discretization_error = lap9 - f
+    X, Y = np.meshgrid(x,y)
+    ax1 = plt.axes(projection='3d')
+    ax1.plot_surface(X, Y, discretization_error, cmap='viridis')
+    ax1.set_title("Discretization Error of 9-point Laplacian")
+    ax1.set_xlabel("x")
+    ax1.set_ylabel("y")
+    ax1.set_zlabel("Discretization Error")
+    plt.savefig("amath581_hw3_p4c_de.pdf")
+    plt.clf
+
+    ax2 = plt.axes(projection='3d')
+    ax2.plot_surface(X, Y, delf, cmap='viridis')
+    ax2.set_title("Analytical Laplacian")
+    ax2.set_xlabel("x")
+    ax2.set_ylabel("y")
+    ax2.set_zlabel("Analytical Laplacian of f")
+    plt.savefig("amath581_hw3_p4c_as.pdf")
+    plt.clf
+    
+
+#------------------------------------------------------------------------------- 
+# dx_list = 2. ** np.arange(-5, 0, +1)
+
+# error_a = np.zeros_like(dx_list)
+# error_b = np.zeros_like(dx_list)
+# error_b_sparse = np.zeros_like(dx_list)
+
+# for i in (range(len(dx_list))):
+#     dx = dx_list[i]
+#     error_a[i] = p4a(dx)
+#     error_b[i] = p4b(dx)
+#     error_b_sparse[i] = p4b_sparse(dx)
+
+# p4a = PdfPages( 'amath581_hw3_p4a_error.pdf')
+# fig, ax = plt.subplots()
+# ax.loglog(dx_list, error_a, 'r-x',label='5-point Laplacian', base=2)
+
+# x_ticks = dx_list
+# x_ticks_labels = np.arange(-5, 0, 1) 
+# ax.set_xticks(x_ticks, x_ticks_labels)
+# ax.set_xlabel(r'$log_{2}(\Delta x$)')
+# ax.set_ylabel(r'$log_{2}(E_N$)')
+# # ax.set_ylim(2*1e-5, 2*1e-1)
+# # ax.set_xlim(0.0, 16.0)
+# plt.tight_layout()
+# ax.legend(loc='best')
+# p4a.savefig()
+# p4a.close()
+
+# p4b = PdfPages( 'amath581_hw3_p4b_error.pdf')
+# fig, ax = plt.subplots()
+# ax.loglog(dx_list, error_b, 'b-x',label='9-point Laplacian', base=2)
+# ax.loglog(dx_list, error_b_sparse, 'ro',label='9-point Laplacian using Sparse A', base=2)
+
+# x_ticks = dx_list
+# x_ticks_labels = np.arange(-5, 0, 1) 
+# ax.set_xticks(x_ticks, x_ticks_labels)
+# ax.set_xlabel(r'$log_{2}(\Delta x$)')
+# ax.set_ylabel(r'$log_{2}(E_N$)')
+# # ax.set_ylim(2*1e-5, 2*1e-1)
+# # ax.set_xlim(0.0, 16.0)
+# plt.tight_layout()
+# ax.legend(loc='best')
+# p4b.savefig()
+# p4b.close()
+
+p4c(0.05)
 
 A1, A2, A3, A4, A5, A6 = p1()
 A7, A8 = p2a()
