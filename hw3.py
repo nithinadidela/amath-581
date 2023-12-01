@@ -425,13 +425,13 @@ def p4a(dx):
     
     error = np.max(np.abs(U_true_sol - U))
 
-    if (dx == 2**(-5)): 
-      X, Y = np.meshgrid(x, y)
-      plt.contourf(X, Y, U_true_sol)
-      cbar = plt.colorbar()
-      plt.axis('equal')
-      plt.savefig('amath581_hw3_p4a_U.pdf')
-      plt.clf()
+    # if (dx == 2**(-5)): 
+    #   X, Y = np.meshgrid(x, y)
+    #   plt.contourf(X, Y, U_true_sol)
+    #   cbar = plt.colorbar()
+    #   plt.axis('equal')
+    #   plt.savefig('amath581_hw3_p4a_U.pdf')
+    #   plt.clf()
     return error
 #------------------------------------------------------------------------------- 
 
@@ -538,13 +538,13 @@ def p4b_sparse(dx):
     
     error = np.max(np.abs(U_true_sol - U))
 
-    if (dx == 2**(-5)): 
-      X, Y = np.meshgrid(x, y)
-      plt.contourf(X, Y, U_true_sol)
-      cbar = plt.colorbar()
-      plt.axis('equal')
-      plt.savefig('amath581_hw3_p4b_U.pdf')
-      plt.clf()
+    # if (dx == 2**(-5)): 
+    #   X, Y = np.meshgrid(x, y)
+    #   plt.contourf(X, Y, U_true_sol)
+    #   cbar = plt.colorbar()
+    #   plt.axis('equal')
+    #   plt.savefig('amath581_hw3_p4b_U.pdf')
+    #   plt.clf()
     return error
 #------------------------------------------------------------------------------- 
 
@@ -641,23 +641,23 @@ def p4c(dx):
     
     discretization_error = lap9 - f
     X, Y = np.meshgrid(x,y)
-    ax1 = plt.axes(projection='3d')
-    ax1.plot_surface(X, Y, discretization_error, cmap='viridis')
-    ax1.set_title("Discretization Error of 9-point Laplacian")
-    ax1.set_xlabel("x")
-    ax1.set_ylabel("y")
-    ax1.set_zlabel("Discretization Error")
-    plt.savefig("amath581_hw3_p4c_de.pdf")
-    plt.clf
+    # ax1 = plt.axes(projection='3d')
+    # ax1.plot_surface(X, Y, discretization_error, cmap='viridis')
+    # ax1.set_title("Discretization Error of 9-point Laplacian")
+    # ax1.set_xlabel("x")
+    # ax1.set_ylabel("y")
+    # ax1.set_zlabel("Discretization Error")
+    # plt.savefig("amath581_hw3_p4c_de.pdf")
+    # plt.clf
 
-    ax2 = plt.axes(projection='3d')
-    ax2.plot_surface(X, Y, delf, cmap='viridis')
-    ax2.set_title("Analytical Laplacian")
-    ax2.set_xlabel("x")
-    ax2.set_ylabel("y")
-    ax2.set_zlabel("Analytical Laplacian of f")
-    plt.savefig("amath581_hw3_p4c_as.pdf")
-    plt.clf
+    # ax2 = plt.axes(projection='3d')
+    # ax2.plot_surface(X, Y, delf, cmap='viridis')
+    # ax2.set_title("Analytical Laplacian")
+    # ax2.set_xlabel("x")
+    # ax2.set_ylabel("y")
+    # ax2.set_zlabel("Analytical Laplacian of f")
+    # plt.savefig("amath581_hw3_p4c_as.pdf")
+    # plt.clf
     
 
 #------------------------------------------------------------------------------- 
@@ -713,17 +713,17 @@ A7, A8 = p2a()
 A9, A10 = p2b()
 A11, A12 = p3(0.1, 0.05)
 A13, A14 = p3(0.01, 0.025)
-print("A1", A1)
-print("A2", A2)
-print("A3", A3)
-print("A4", A4)
-print("A5", A5)
-print("A6", A6)
-print("A7", A7)
-print("A8", A8)
-print("A9", A9)
-print("A10", A10)
-print("A11", A11)
-print("A12", A12)
-print("A13", A13)
-print("A14", A14)
+# print("A1", A1)
+# print("A2", A2)
+# print("A3", A3)
+# print("A4", A4)
+# print("A5", A5)
+# print("A6", A6)
+# print("A7", A7)
+# print("A8", A8)
+# print("A9", A9)
+# print("A10", A10)
+# print("A11", A11)
+# print("A12", A12)
+# print("A13", A13)
+# print("A14", A14)
